@@ -7,7 +7,7 @@ this is a bar tool which base on python-barcode and barcode.
 
 ##### 1. install
 ```bash
-pip install barcoder
+pip install pybarcoder
 ```
 
 ##### 2. usage

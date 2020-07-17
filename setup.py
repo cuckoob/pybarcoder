@@ -20,7 +20,7 @@ KEYWORDS = (
 
 setup(
     name='pybarcoder',
-    version='0.6.13',
+    version='0.7.17',
     maintainer='Murray',
     maintainer_email='sunglowrise@qq.com',
     url='https://github.com/sunglowrise/pybarcoder',
@@ -37,7 +37,6 @@ setup(
     include_package_data=True,
     python_requires=">=3.5",
     install_requires=[
-        'barcode==1.0.1',
         'python-barcode==0.11.0',
         'pillow>=7.1.2'
     ],

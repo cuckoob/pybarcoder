@@ -3,7 +3,6 @@
 """
 Created By Murray(m18527) on 2020/6/12 14:40
 ----------------------
-pip install barcode==1.0.1 pillow==7.1.2 python-barcode==0.11.0
 """
 import base64
 import os
