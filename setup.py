@@ -20,7 +20,7 @@ KEYWORDS = (
 
 setup(
     name='pybarcoder',
-    version='0.7.17',
+    version='0.8.6',
     maintainer='Murray',
     maintainer_email='sunglowrise@qq.com',
     url='https://github.com/sunglowrise/pybarcoder',

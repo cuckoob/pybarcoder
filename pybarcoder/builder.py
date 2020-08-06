@@ -35,7 +35,7 @@ class ImageWriterExt(ImageWriter):
         self.text_length = len(code[0])
 
     def _paint_module(self, xpos, ypos, width, color):
-        ypos += 2.5
+        ypos += 3
         size = [(mm2px(xpos, self.dpi), mm2px(ypos, self.dpi)),
                 (mm2px(xpos + width, self.dpi),
                  mm2px(ypos + self.module_height, self.dpi))]
@@ -43,7 +43,7 @@ class ImageWriterExt(ImageWriter):
 
     def _paint_text(self, xpos, ypos):
         xpos += self.quiet_zone
-        font = ImageFont.truetype(FONT, self.font_size * 2)
+        font = ImageFont.truetype(FONT, self.font_size)
         width, height = font.getsize(self.text)
         pos = (mm2px(xpos, self.dpi) - width // 2,
                mm2px(ypos, self.dpi) - height // 4)
@@ -54,40 +54,40 @@ class ImageWriterExt(ImageWriter):
         self._paint_text_right_bottom(ypos)
 
     def _paint_text_left_top(self):
-        font = ImageFont.truetype(FONT, self.font_size * 2)
+        font = ImageFont.truetype(FONT, self.font_size)
         width, height = font.getsize(self.ft_text)
-        xpos, ypos = self.quiet_zone * 1.75 + px2mm(height, self.dpi), 1
-        pos = (mm2px(xpos, self.dpi) - width // 2,
+        xpos, ypos = self.quiet_zone + px2mm(width, self.dpi), 1.8
+        pos = (mm2px(xpos, self.dpi) - width,
                mm2px(ypos, self.dpi) - height // 4)
         self._draw.text(pos, self.ft_text, font=font, fill=self.foreground)
 
     def _paint_text_left_bottom(self, ypos):
-        font = ImageFont.truetype(FONT, self.font_size * 2)
+        font = ImageFont.truetype(FONT, self.font_size)
         width, height = font.getsize(self.fb_text)
-        xpos, ypos = self.quiet_zone * 1.75 + px2mm(height, self.dpi), ypos
-        pos = (mm2px(xpos, self.dpi) - width // 2,
+        xpos, ypos = self.quiet_zone + px2mm(width, self.dpi), ypos + 0.6
+        pos = (mm2px(xpos, self.dpi) - width,
                mm2px(ypos, self.dpi) - height // 4)
         self._draw.text(pos, self.fb_text, font=font, fill=self.foreground)
 
     def _paint_text_right_top(self):
-        font = ImageFont.truetype(FONT, self.font_size * 2)
+        font = ImageFont.truetype(FONT, self.font_size)
         width, height = font.getsize(self.rt_text)
-        xpos, ypos = self.module_width * self.text_length - px2mm(width, self.dpi) * 0.5 + self.quiet_zone, 1
+        xpos, ypos = self.module_width * self.text_length - px2mm(width, self.dpi) * 0.5 + self.quiet_zone, 1.8
         pos = (mm2px(xpos, self.dpi) - width // 2,
                mm2px(ypos, self.dpi) - height // 4)
         self._draw.text(pos, self.rt_text, font=font, fill=self.foreground)
 
     def _paint_text_right_bottom(self, ypos):
-        font = ImageFont.truetype(FONT, self.font_size * 2)
+        font = ImageFont.truetype(FONT, self.font_size)
         width, height = font.getsize(self.rb_text)
-        xpos, ypos = self.module_width * self.text_length - px2mm(width, self.dpi) * 0.5 + self.quiet_zone, ypos
+        xpos, ypos = self.module_width * self.text_length - px2mm(width, self.dpi) * 0.5 + self.quiet_zone, ypos + 0.6
         pos = (mm2px(xpos, self.dpi) - width // 2,
                mm2px(ypos, self.dpi) - height // 4)
         self._draw.text(pos, self.rb_text, font=font, fill=self.foreground)
 
 
 class BarCoder(object):
-    def __init__(self, name="Code39"):
+    def __init__(self, name="Code128"):
         self.bar_builder = None
         self.name = name
         self.path = None
@@ -109,7 +109,7 @@ class BarCoder(object):
             'module_width': 0.2,  # 默认值0.2，每个条码宽度，单位为毫米
             'module_height': 8.0,  # 默认值15.0，条码高度，单位为毫米
             'quiet_zone': 3,  # 默认值6.5，两端空白宽度，单位为毫米
-            'font_size': 12,  # 默认值10，文本字体大小，单位为磅
+            'font_size': 16,  # 默认值10，文本字体大小，单位为磅
             'text_distance': 3.2,  # 默认值5.0，文本和条码之间的距离，单位为毫米
             'background': 'white',  # 默认值'white'，背景色
             'foreground': 'black',  # 默认值'black'，前景色
