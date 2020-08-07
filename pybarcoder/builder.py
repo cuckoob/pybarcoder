@@ -14,6 +14,8 @@ from barcode.writer import ImageWriter, ImageFont, Image, ImageDraw
 PATH = os.path.dirname(os.path.abspath(__file__))
 FONT = os.path.join(PATH, 'msyh.ttf.py')
 
+VERSION = "0.8.7"
+
 
 def px2mm(px, dpi=300):
     return (px * 25.4) / dpi

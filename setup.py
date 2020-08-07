@@ -2,6 +2,8 @@ import os
 
 from setuptools import find_packages, setup
 
+import pybarcoder
+
 with open(os.path.join(os.path.dirname(__file__), 'README.md'), "r", encoding='utf-8') as fh:
     LONG_DESCRIPTION = fh.read()
 
@@ -20,7 +22,7 @@ KEYWORDS = (
 
 setup(
     name='pybarcoder',
-    version='0.8.6',
+    version=pybarcoder.__version__,
     maintainer='Murray',
     maintainer_email='sunglowrise@qq.com',
     url='https://github.com/sunglowrise/pybarcoder',
