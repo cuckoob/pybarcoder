@@ -9,7 +9,7 @@ import os
 import uuid
 
 import barcode
-from barcode.writer import ImageWriter, mm2px, ImageFont, Image, ImageDraw
+from barcode.writer import ImageWriter, ImageFont, Image, ImageDraw
 
 PATH = os.path.dirname(os.path.abspath(__file__))
 FONT = os.path.join(PATH, 'msyh.ttf.py')
@@ -17,6 +17,14 @@ FONT = os.path.join(PATH, 'msyh.ttf.py')
 
 def px2mm(px, dpi=300):
     return (px * 25.4) / dpi
+
+
+def mm2px(mm, dpi=300):
+    return (mm * dpi) / 25.4
+
+
+def pt2mm(pt):
+    return pt * 0.352777778
 
 
 class ImageWriterExt(ImageWriter):
@@ -35,16 +43,17 @@ class ImageWriterExt(ImageWriter):
         self.text_length = len(code[0])
 
     def _paint_module(self, xpos, ypos, width, color):
-        ypos += 3
+        height = px2mm(self.font_size, self.dpi)
+        ypos += self.text_distance / 2 + height
         size = [(mm2px(xpos, self.dpi), mm2px(ypos, self.dpi)),
                 (mm2px(xpos + width, self.dpi),
                  mm2px(ypos + self.module_height, self.dpi))]
         self._draw.rectangle(size, outline=color, fill=color)
 
     def _paint_text(self, xpos, ypos):
-        xpos += self.quiet_zone
-        font = ImageFont.truetype(FONT, self.font_size)
+        font = ImageFont.truetype(FONT, self.font_size * 2)
         width, height = font.getsize(self.text)
+        ypos = self.text_distance + self.module_height + px2mm(self.font_size, self.dpi) + self.text_line_distance / 2
         pos = (mm2px(xpos, self.dpi) - width // 2,
                mm2px(ypos, self.dpi) - height // 4)
         self._draw.text(pos, self.text, font=font, fill=self.foreground)
@@ -54,33 +63,35 @@ class ImageWriterExt(ImageWriter):
         self._paint_text_right_bottom(ypos)
 
     def _paint_text_left_top(self):
-        font = ImageFont.truetype(FONT, self.font_size)
+        font = ImageFont.truetype(FONT, self.font_size * 2)
         width, height = font.getsize(self.ft_text)
-        xpos, ypos = self.quiet_zone + px2mm(width, self.dpi), 1.8
+        xpos = self.quiet_zone + px2mm(width, self.dpi)
+        ypos = (self.text_distance - px2mm(height, self.dpi) + 1) / 2
         pos = (mm2px(xpos, self.dpi) - width,
                mm2px(ypos, self.dpi) - height // 4)
         self._draw.text(pos, self.ft_text, font=font, fill=self.foreground)
 
     def _paint_text_left_bottom(self, ypos):
-        font = ImageFont.truetype(FONT, self.font_size)
+        font = ImageFont.truetype(FONT, self.font_size * 2)
         width, height = font.getsize(self.fb_text)
-        xpos, ypos = self.quiet_zone + px2mm(width, self.dpi), ypos + 0.6
+        xpos = self.quiet_zone + px2mm(width, self.dpi)
         pos = (mm2px(xpos, self.dpi) - width,
                mm2px(ypos, self.dpi) - height // 4)
         self._draw.text(pos, self.fb_text, font=font, fill=self.foreground)
 
     def _paint_text_right_top(self):
-        font = ImageFont.truetype(FONT, self.font_size)
+        font = ImageFont.truetype(FONT, self.font_size * 2)
         width, height = font.getsize(self.rt_text)
-        xpos, ypos = self.module_width * self.text_length - px2mm(width, self.dpi) * 0.5 + self.quiet_zone, 1.8
+        xpos = self.module_width * self.text_length - px2mm(width, self.dpi) / 2 + self.quiet_zone
+        ypos = (self.text_distance - px2mm(height, self.dpi) + 1) / 2
         pos = (mm2px(xpos, self.dpi) - width // 2,
                mm2px(ypos, self.dpi) - height // 4)
         self._draw.text(pos, self.rt_text, font=font, fill=self.foreground)
 
     def _paint_text_right_bottom(self, ypos):
-        font = ImageFont.truetype(FONT, self.font_size)
+        font = ImageFont.truetype(FONT, self.font_size * 2)
         width, height = font.getsize(self.rb_text)
-        xpos, ypos = self.module_width * self.text_length - px2mm(width, self.dpi) * 0.5 + self.quiet_zone, ypos + 0.6
+        xpos = self.module_width * self.text_length - px2mm(width, self.dpi) / 2 + self.quiet_zone
         pos = (mm2px(xpos, self.dpi) - width // 2,
                mm2px(ypos, self.dpi) - height // 4)
         self._draw.text(pos, self.rb_text, font=font, fill=self.foreground)
@@ -109,8 +120,8 @@ class BarCoder(object):
             'module_width': 0.2,  # 默认值0.2，每个条码宽度，单位为毫米
             'module_height': 8.0,  # 默认值15.0，条码高度，单位为毫米
             'quiet_zone': 3,  # 默认值6.5，两端空白宽度，单位为毫米
-            'font_size': 16,  # 默认值10，文本字体大小，单位为磅
-            'text_distance': 3.2,  # 默认值5.0，文本和条码之间的距离，单位为毫米
+            'font_size': 10,  # 默认值10，文本字体大小，单位为磅
+            'text_distance': 3,  # 默认值5.0，文本和条码之间的距离，单位为毫米
             'background': 'white',  # 默认值'white'，背景色
             'foreground': 'black',  # 默认值'black'，前景色
             'text': ' ',  # 默认值''，显示文本，默认显示编码，也可以自行设定
@@ -146,11 +157,11 @@ class BarCoder(object):
 
 if __name__ == '__main__':
     BarCoder().set_options({
-        'module_width': 0.2,  # 默认值0.2，每个条码宽度，单位为毫米
-        'module_height': 8.0,  # 默认值15.0，条码高度，单位为毫米
-        'quiet_zone': 3,  # 默认值6.5，两端空白宽度，单位为毫米
-        'font_size': 12,  # 默认值10，文本字体大小，单位为磅
-        'format': 'PNG',  # 默认值'PNG'，保存文件格式，默认为PNG，也可以设为JPEG、BMP等，只在使用ImageWriter时有效。
-        'dpi': 300,  # 默认值300，图片分辨率，，只在使用ImageWriter时有效。
-    }).set_msg("S123456789", "左上角信息", "左下角信息", "右上角信息", "右下角信息").base64()
+        # 'module_width': 0.2,  # 默认值0.2，每个条码宽度，单位为毫米
+        # 'module_height': 8.0,  # 默认值15.0，条码高度，单位为毫米
+        # 'quiet_zone': 3,  # 默认值6.5，两端空白宽度，单位为毫米
+        # 'font_size': 12,  # 默认值10，文本字体大小，单位为磅
+        # 'format': 'PNG',  # 默认值'PNG'，保存文件格式，默认为PNG，也可以设为JPEG、BMP等，只在使用ImageWriter时有效。
+        # 'dpi': 300,  # 默认值300，图片分辨率，，只在使用ImageWriter时有效。
+    }).set_msg("S123456789123456", "左上角信息", "左下角信息", "右上角信息", "右下角信息").save()
     print("生成成功")
